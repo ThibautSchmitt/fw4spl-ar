@@ -26,6 +26,8 @@ const ::fwCom::Slots::SlotKeyType INetworkSender::s_SEND_DATA_SLOT            = 
 const ::fwCom::Signals::SignalKeyType INetworkSender::s_SERVER_STARTED_SIGNAL = "serverStarted";
 const ::fwCom::Signals::SignalKeyType INetworkSender::s_SERVER_STOPPED_SIGNAL = "serverStopped";
 
+const ::fwServices::IService::KeyType s_OBJECTS_INOUT    = "objects";
+
 //-----------------------------------------------------------------------------
 
 INetworkSender::INetworkSender()
@@ -61,7 +63,10 @@ void INetworkSender::starting() throw (::fwTools::Failed)
 {
     SLM_TRACE_FUNC();
 
-    m_connections.connect(this->getObject(), this->getSptr(), this->getObjSrvConnections());
+    if(!this->isVersion2())
+    {
+        m_connections.connect(this->getObject(), this->getSptr(), this->getObjSrvConnections());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -70,15 +75,36 @@ void INetworkSender::stopping() throw (::fwTools::Failed)
 {
     SLM_TRACE_FUNC();
 
-    m_connections.disconnect();
+    if(!this->isVersion2())
+    {
+        m_connections.disconnect();
+    }
 }
 
 //-----------------------------------------------------------------------------
-
 void INetworkSender::updating() throw (::fwTools::Failed)
 {
     SLM_TRACE_FUNC();
-    this->sendObject(this->getObject());
+    if (this->isStarted())
+    {
+        if(this->isVersion2())
+        {
+            const size_t numObjects = this->getKeyGroupSize(s_OBJECTS_INOUT);
+            // Grab the objects to send
+            for(size_t i = 0; i < numObjects; ++i)
+            {
+                ::fwData::Object::sptr object = this->getInOut< ::fwData::Object >(s_OBJECTS_INOUT, i);
+                if (object)
+                {
+                    this->sendObject(object);
+                }
+            }
+        }
+        else
+        {
+            this->sendObject(this->getObject());
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------

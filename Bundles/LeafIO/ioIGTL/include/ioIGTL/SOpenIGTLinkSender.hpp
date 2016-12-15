@@ -27,9 +27,26 @@ namespace ioIGTL
 {
 
 /**
+ * @brief Service to create an OpenIGTLink Server
  *
- * @brief class for a network server in service class use OpenIGTLink
- */
+ * @section XML XML Configuration
+ * @code{.xml}
+ * <service uid="..." type="::ioIGTL::SOpenIGTLinkSender" >
+ *      <port>...</port>
+ *      <deviceName>...</deviceName>
+ *      <in group="objects">
+ *           <key uid="..." />
+ *           <key uid="..." />
+ *      </in>
+ * </service>
+ * @endcode
+ * @subsection Input Input
+ * - \b objects [::fwData::Object]: defines the objects to send.
+ * @subsection Configuration Configuration:
+ * - \b port : defines the port where the objects will be sent
+ * - \b deviceName : defines the name of the device (here, our server)
+**/
+
 class IOIGTL_CLASS_API SOpenIGTLinkSender : public ::ioNetwork::INetworkSender
 {
 
@@ -55,18 +72,6 @@ public:
 
 protected:
 
-    /**
-     * @brief configure the server. Need the port in xml
-     * @code{.xml}
-     * <service type="::ioNetwork::INetworkSender" impl="::ioIGTL::SOpenIGTSender" uid="networkSender" autoConnect="no">
-     *      <port>4242</port>
-     *      <deviceName>FW4SPL</deviceName>
-     * </service>
-     *
-     * - deviceName is optional (if set,sended message have 'deviceName' name).
-     *
-     * @endcode
-     */
     IOIGTL_API virtual void configuring() throw ( ::fwTools::Failed );
 
     /**

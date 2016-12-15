@@ -83,9 +83,9 @@ public:
     IONETWORK_API virtual ~INetworkSender();
 
     /**
-     * @brief method to set a port to listen
+     * @brief method to set a port to send
      *
-     * @param[in] port new port to listen
+     * @param[in] port new port to send
      */
     IONETWORK_API virtual void setPort(::boost::uint16_t const port) throw (::fwTools::Failed) = 0;
 
